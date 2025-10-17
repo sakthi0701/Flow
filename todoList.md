@@ -1,0 +1,24 @@
+# Todo List
+
+- [x] Scaffold project & init repo
+  - Create project folder structure, virtualenv/venv or pyproject, and initial README. Include placeholder modules: flow_ai_router.py, agents/, memory/, context_manager.py, tests/.
+- [x] Define JSON schemas
+  - Design JSON schemas for user data (fixedEvents, tasks, goals, classes, syllabusNotes, preferences) and schedule output (startTime, endTime, task, category, priority). Add sample dataset for testing.
+- [x] Implement memory module
+  - Create memory/ with vector-memory adapter interface and a simple local JSON-memory fallback (Chroma/Pinecone stubs). Provide retrieve() and persist() APIs.
+- [x] Implement agent interfaces
+  - Create agents/ modules: base Agent class and ParserAgent, ConstraintAgent, AllocatorAgent, CoachAgent, plus ConflictResolverAgent stub. Each agent must accept and return state dicts.
+- [x] flow_ai_router and chaining
+  - Implement flow_ai_router.py to run agent chains, call memory retrieval, and return final schedule JSON.
+- [x] Core scheduling logic
+  - Implement schedule allocation algorithm: fixed vs flexible events, priority-based slot filling using Eisenhower logic, break preference handling.
+- [x] LLM prompt templates & validator
+  - Add prompt templates for each agent and a JSON response validator/cleaner for LLM outputs. Include retry/error handling.
+- [x] Learning & feedback data model
+  - Add data structures for event feedback and a simple weighting update function to adjust scheduling based on past completion/tiredness.
+- [x] Integration endpoints (file/API)
+  - Create basic API-like file interface functions: get_schedule(), update_task(), add_goal(), chat_command(). Keep implementation local (no external server).
+- [x] Unit tests & sample run
+  - Write pytest tests for core scheduling scenarios and a sample script that runs flows with the sample dataset. Include at least happy path + one conflict case.
+- [x] Documentation & TODO maintenance
+  - Update PRD task list file in repo, list relevant files and brief descriptions, add README usage and how to run tests.

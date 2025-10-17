@@ -1,0 +1,31 @@
+{
+  "memories": [
+    {
+      "user_id": "default",
+      "item": "User prefers DSA after 20:00"
+    },
+    {
+      "user_id": "default",
+      "item": "Often misses morning sessions on weekends"
+    },
+    {
+      "user_id": "test_user",
+      "item": {
+        "type": "task",
+        "title": "Finish AI project",
+        "estimatedMinutes": 120,
+        "category": "project",
+        "urgent": true,
+        "important": true
+      }
+    },
+    {
+      "user_id": "test_user",
+      "item": {
+        "type": "goal",
+        "title": "Ace the final exam",
+        "deadline": "2025-10-25"
+      }
+    }
+  ]
+}

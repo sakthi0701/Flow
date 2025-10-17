@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UserData",
+  "type": "object",
+  "required": ["user_id", "preferences", "fixedEvents", "tasks", "goals", "classes", "syllabusNotes"],
+  "properties": {
+    "user_id": {"type": "string"},
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "break_ratio": {
+          "type": "object",
+          "properties": {
+            "work_minutes": {"type": "integer"},
+            "break_minutes": {"type": "integer"}
+          },
+          "required": ["work_minutes", "break_minutes"]
+        },
+        "preferred_study_time": {"type": "string"}
+      }
+    },
+    "fixedEvents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "start", "end"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "start": {"type": "string", "format": "date-time"},
+          "end": {"type": "string", "format": "date-time"},
+          "recurring": {"type": "string"}
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "estimated_minutes"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "estimated_minutes": {"type": "integer"},
+          "priority": {"type": "string"},
+          "category": {"type": "string"},
+          "goal_id": {"type": "string"},
+          "class_id": {"type": "string"}
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "syllabusNotes": {"type": "string"}
+        }
+      }
+    },
+    "syllabusNotes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class_id", "note"],
+        "properties": {
+          "class_id": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}
