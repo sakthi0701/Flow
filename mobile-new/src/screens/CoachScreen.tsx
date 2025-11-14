@@ -26,21 +26,7 @@ export const CoachScreen: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
-  const colors = {
-    ...theme.colors,
-    tint: theme.colors.primary,
-    icon: theme.colors.text,
-    tabIconDefault: theme.colors.border,
-    tabIconSelected: theme.colors.primary,
-    primary: theme.colors.primary,
-    subtle: theme.colors.border,
-    accent: {
-      blue: '#67E8F9',
-      mint: '#A7F3D0',
-      lavender: '#8E85FF'
-    }
-  };
+  const { colors } = useTheme();
 
   // Load chat history when component mounts
   useEffect(() => {
@@ -178,6 +164,7 @@ const styles = StyleSheet.create({
   },
   welcomeSubtext: {
     fontSize: 16,
+    color: '#666',
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -187,6 +174,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   typingText: {
+    color: '#666',
     fontSize: 14,
     fontStyle: 'italic',
   },

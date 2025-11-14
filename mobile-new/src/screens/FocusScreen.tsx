@@ -1,51 +1,35 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import type { ColorScheme } from '../../types/theme';
 import { FocusTimer } from '../components/focus-timer';
+import { BottomNav } from '../../components/bottom-nav';
 
-export const FocusScreen: React.FC<any> = () => {
-  const theme = useTheme();
-  const colors: ColorScheme = {
-    ...theme.colors,
-    tint: theme.colors.primary,
-    icon: theme.colors.text,
-    tabIconDefault: theme.colors.border,
-    tabIconSelected: theme.colors.primary,
-    primary: theme.colors.primary,
-    subtle: theme.colors.border,
-    accent: {
-      blue: '#67E8F9',
-      mint: '#A7F3D0',
-      lavender: '#8E85FF'
-    }
-  };
-
-  const styles = makeStyles(colors);
+export const FocusScreen: React.FC<any> = ({ navigation, route }) => {
+  const { colors } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FocusTimer />
+      <BottomNav navigation={navigation} route={route} />
     </View>
   );
 };
 
-const makeStyles = (colors: ColorScheme) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center'
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 32,
-    color: colors.text,
+    marginBottom: 32
   },
   subtitle: {
     fontSize: 16,
-    color: colors.subtle,
+    color: '#666',
     textAlign: 'center',
     marginHorizontal: 32,
     marginTop: 16

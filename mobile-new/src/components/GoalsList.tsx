@@ -1,7 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { useTheme } from '@react-navigation/native';
-import type { ColorScheme } from '../../types/theme';
 
 type Goal = {
   id: string;
@@ -11,24 +9,6 @@ type Goal = {
 };
 
 export const GoalsList: React.FC = () => {
-  const theme = useTheme();
-  const colors: ColorScheme = {
-    ...theme.colors,
-    tint: theme.colors.primary,
-    icon: theme.colors.text,
-    tabIconDefault: theme.colors.border,
-    tabIconSelected: theme.colors.primary,
-    primary: theme.colors.primary,
-    subtle: theme.colors.border,
-    accent: {
-      blue: '#67E8F9',
-      mint: '#A7F3D0',
-      lavender: '#8E85FF'
-    }
-  };
-
-  const styles = makeStyles(colors);
-
   const goals: Goal[] = [
     {
       id: '1',
@@ -36,12 +16,7 @@ export const GoalsList: React.FC = () => {
       progress: 60,
       dueDate: '2025-11-15',
     },
-    {
-      id: '2',
-      title: 'Ace Final Exams',
-      progress: 30,
-      dueDate: '2025-12-15',
-    },
+    // Add more goals as needed
   ];
 
   return (
@@ -63,40 +38,40 @@ export const GoalsList: React.FC = () => {
   );
 };
 
-const makeStyles = (colors: ColorScheme) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   goalItem: {
-    backgroundColor: colors.card,
+    backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   goalTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
-    color: colors.text,
   },
   progressBar: {
     height: 6,
-    backgroundColor: colors.border + '40',
+    backgroundColor: '#e0e0e0',
     borderRadius: 3,
     marginBottom: 8,
   },
   progress: {
     height: '100%',
-    backgroundColor: colors.primary,
+    backgroundColor: '#4285f4',
     borderRadius: 3,
   },
   dueDate: {
     fontSize: 12,
-    color: colors.subtle,
+    color: '#666',
   },
 });
