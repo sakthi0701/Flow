@@ -1,30 +1,30 @@
-# Life Scheduler — Copilot (Phase 1)
+# Life Scheduler - Copilot (Phase 1)
 
-Minimal scaffold for the Copilot backend described in the PRD. Includes agent plumbing, local memory fallback, sample data and tests.
+This project is organized into two main parts:
 
+## Backend (`backend/`)
+Contains the Python-based AI scheduling backend with:
+- AI agent system for parsing, constraining, allocating, and coaching
+- Local memory implementation for context persistence
+- REST API endpoints for frontend integration
+- Tests and sample data
 
-## Quick Start
+## Frontend (`frontend/`)
+Contains the React Native mobile application with:
+- Expo-based mobile interface
+- Screens for home, dashboard, planner, coach, focus, and settings
+- Components for calendar, chat, timer, and more
+- API service integration with the backend
 
-### Poetry (recommended)
-```powershell
-poetry install
-poetry shell
-pytest -q
-```
+## Getting Started
 
-### Plain pip/venv
-```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1; pip install -r requirements-test.txt
-pytest -q
-```
+### Backend
+Navigate to the [backend/](backend/) directory and follow the instructions in [README.md](backend/README.md).
 
-## Usage
+### Frontend
+Navigate to the [frontend/](frontend/) directory and follow the instructions in [README.md](frontend/README.md) (if available) or use standard Expo commands.
 
-- To run the agent chain: see `flow_ai_router.py` (main section)
-- To use file-based API: see `integration.py` and `test_integration.py`
-- To test LLM prompts: see `test_llm.py`
-- To test feedback/learning: see `test_feedback.py`
-
-## Project Layout & Task List
-
-See [PRD_TASKS.md](PRD_TASKS.md) for a full file map and completed task checklist.
+## Development Workflow
+1. Start the backend server
+2. Start the frontend development server
+3. Connect the frontend to the backend via API calls

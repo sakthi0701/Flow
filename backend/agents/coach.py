@@ -14,9 +14,10 @@ class CoachAgent(Agent):
     def run(self, state):
         schedule = state.get("schedule", [])
         context = state.get("context", [])
+        preferences = state.get("preferences", {})
         
         # get LLM to generate coaching message
-        prompt = CoachPromptTemplate.format(context=context, schedule=schedule)
+        prompt = CoachPromptTemplate.format(context=context, schedule=schedule, preferences=preferences)
         resp = self.llm.generate(prompt)
         parsed = parse_llm_response(resp["text"])
         

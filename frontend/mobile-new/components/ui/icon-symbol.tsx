@@ -26,6 +26,12 @@ const MAPPING = {
   'arrow.clockwise': 'refresh',
   'mic': 'mic', // Added for home screen
   'calendar': 'calendar-today', // Added for home screen
+  // Added for InteractiveCalendar.tsx
+  'plus': 'add',
+  'text.alignleft': 'text-fields',
+  'location': 'location-on',
+  'clock': 'schedule',
+  'doc.text': 'description'
 } as const;
 
 type IconMapping = typeof MAPPING;

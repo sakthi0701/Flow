@@ -3,20 +3,44 @@ import { useTheme } from '@react-navigation/native';
 import { IconSymbol } from './ui/icon-symbol';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
+import { Colors } from '@/constants/theme';
+
+// Define the icon name type based on the MAPPING in icon-symbol.tsx
+type IconName = 
+  | 'house.fill'
+  | 'timer'
+  | 'person.2.fill'
+  | 'chart.bar.fill'
+  | 'line.3.horizontal'
+  | 'paperplane.fill'
+  | 'chevron.left.forwardslash.chevron.right'
+  | 'chevron.right'
+  | 'xmark'
+  | 'play.fill'
+  | 'pause.fill'
+  | 'stop.fill'
+  | 'arrow.clockwise'
+  | 'mic'
+  | 'calendar'
+  | 'plus'
+  | 'text.alignleft'
+  | 'location'
+  | 'clock'
+  | 'doc.text';
 
 type NavItem = {
   name: string;
-  icon: string;
+  icon: IconName;
   label: string;
   route: string;
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { name: 'home', icon: 'house.fill', label: 'Home', route: 'Home' },
-  { name: 'focus', icon: 'timer', label: 'Focus', route: 'Focus' },
-  { name: 'coach', icon: 'person.2.fill', label: 'Coach', route: 'Coach' },
-  { name: 'dashboard', icon: 'chart.bar.fill', label: 'Dashboard', route: 'Dashboard' },
-  { name: 'more', icon: 'line.3.horizontal', label: 'More', route: 'More' },
+  { name: 'home', icon: 'house.fill', label: 'Home', route: 'home' },
+  { name: 'focus', icon: 'timer', label: 'Focus', route: 'focus' },
+  { name: 'coach', icon: 'person.2.fill', label: 'Coach', route: 'coach' },
+  { name: 'dashboard', icon: 'chart.bar.fill', label: 'Dashboard', route: 'dashboard' },
+  { name: 'more', icon: 'line.3.horizontal', label: 'More', route: 'settings' },
 ];
 
 type BottomNavProps = {
@@ -25,8 +49,9 @@ type BottomNavProps = {
 };
 
 export function BottomNav({ navigation, route }: BottomNavProps) {
-  const { colors } = useTheme();
+  const { dark } = useTheme();
   const currentRoute = route?.name;
+  const colors = dark ? Colors.dark : Colors.light;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
@@ -47,12 +72,12 @@ export function BottomNav({ navigation, route }: BottomNavProps) {
                 <IconSymbol
                   name={item.icon}
                   size={24}
-                  color={isCurrent ? colors.primary : colors.icon}
+                  color={isCurrent ? colors.primary : colors.tabIconDefault}
                 />
                 <Text
                   style={[
                     styles.label,
-                    { color: isCurrent ? colors.primary : colors.icon },
+                    { color: isCurrent ? colors.primary : colors.tabIconDefault },
                     isCurrent && styles.labelBold,
                   ]}
                 >

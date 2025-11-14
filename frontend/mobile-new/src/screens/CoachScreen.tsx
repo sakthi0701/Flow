@@ -6,12 +6,13 @@ import {
   Text,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@react-navigation/native';
 import { MessageBubble } from '../components/chat/message-bubble';
 import { api, ChatMessage } from '../services/api';
-import { ChatInput } from '../components/chat/chat-input'; // <-- 1. IMPORTED
+import { ChatInput } from '../components/chat/chat-input';
 
 export type MessageType = 'assistant' | 'user';
 
@@ -49,13 +50,15 @@ export const CoachScreen: React.FC = () => {
 
   const loadChatHistory = async () => {
     try {
-      const chatMessages = await api.getChatMessages('default-user');
-      const formattedMessages = chatMessages.map(msg => ({
-        id: msg.id,
-        type: msg.type as MessageType,
-        content: msg.content
-      }));
-      setMessages(formattedMessages);
+      // For now, we'll start with a welcome message since we don't have persistent chat history
+      if (messages.length === 0) {
+        const welcomeMessage: Message = {
+          id: 'welcome',
+          type: 'assistant',
+          content: 'Hello! I\'m your AI coach. How can I help you today?'
+        };
+        setMessages([welcomeMessage]);
+      }
     } catch (error) {
       console.error('Failed to load chat history:', error);
     }
@@ -63,37 +66,75 @@ export const CoachScreen: React.FC = () => {
 
   const handleSend = useCallback(async (message: string) => {
     if (message.trim()) {
-      const newMessage: Message = {
+      const userMessage: Message = {
         id: Date.now().toString(),
         type: 'user',
         content: message.trim(),
       };
       
-      setMessages(prev => [...prev, newMessage]);
+      // Add user message to UI immediately
+      setMessages(prev => [...prev, userMessage]);
       setIsTyping(true);
       
       try {
         // Send message to backend
-        await api.sendChatMessage('default-user', message.trim());
+        const response = await api.sendChatMessage('default-user', message.trim());
+        console.log('Backend response:', response);
         
-        // The API service simulates AI response, so we don't need to add it manually
-        // In a real implementation, we would listen for updates or poll for responses
+        // Process the backend response
+        let responseContent = "I've received your message. ";
+        
+        // Check if there are errors in the response
+        if (response && response.errors && response.errors.length > 0) {
+          // Extract error information
+          const errorMessages = response.errors.map((err: any) => err.error).join(', ');
+          responseContent = `I encountered an error while processing your request: ${errorMessages}`;
+        } 
+        // Check if there's a reply or response property
+        else if (response && typeof response === 'object') {
+          if (response.reply) {
+            responseContent = response.reply;
+          } else if (response.response) {
+            responseContent = response.response;
+          } else if (response.schedule && Array.isArray(response.schedule)) {
+            if (response.schedule.length > 0) {
+              responseContent = `I found ${response.schedule.length} items in your schedule.`;
+            } else {
+              responseContent = "I couldn't find anything in your schedule.";
+            }
+          } else if (response.parsed) {
+            // Try to create a meaningful response based on parsed intent
+            const intent = response.parsed.intent;
+            if (intent === 'schedule_task') {
+              responseContent = "I can help you schedule tasks. What would you like to schedule?";
+            } else {
+              responseContent = `I processed your request with intent: ${intent}`;
+            }
+          } else {
+            responseContent = "I've processed your request successfully.";
+          }
+        } else if (typeof response === 'string') {
+          responseContent = response;
+        }
+        
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          content: responseContent
+        };
+        setMessages(prev => [...prev, aiMessage]);
+        setIsTyping(false);
       } catch (error) {
         console.error('Failed to send message:', error);
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          content: 'Sorry, I encountered an error processing your request. Please try again.'
+        };
+        setMessages(prev => [...prev, errorMessage]);
         setIsTyping(false);
       }
     }
-  }, []);
-
-  // Simulate receiving AI responses
-  useEffect(() => {
-    // In a real implementation, we would subscribe to real-time updates
-    // For now, we'll reload messages periodically to simulate updates
-    const interval = setInterval(() => {
-      loadChatHistory();
-    }, 2000);
-    
-    return () => clearInterval(interval);
   }, []);
 
   const renderMessages = () => {
@@ -138,11 +179,10 @@ export const CoachScreen: React.FC = () => {
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={insets.bottom} // <-- Use insets for vertical offset
+      keyboardVerticalOffset={insets.bottom}
     >
       <View style={styles.contentContainer}>
         {renderMessages()}
-        {/* 2. REPLACED old input with ChatInput component */}
         <ChatInput onSend={handleSend} />
       </View>
     </KeyboardAvoidingView>
@@ -163,7 +203,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
   },
-  // 3. REMOVED old inputContainer, input, sendButton, sendButtonText styles
   welcomeContainer: {
     padding: 16,
     alignItems: 'center',
