@@ -1,0 +1,28 @@
+{
+  "test_user": {
+    "test_task": {
+      "task_id": "test_task",
+      "scheduled_start": "2025-11-14T10:00:38.828961",
+      "scheduled_end": "2025-11-14T12:00:38.828961",
+      "actual_start": "2025-11-14T10:05:38.828961",
+      "actual_end": "2025-11-14T11:55:38.828961",
+      "completed": true,
+      "energy_level": 4,
+      "difficulty": 3,
+      "satisfaction": 4,
+      "notes": "Felt good about this session"
+    },
+    "morning_fail": {
+      "task_id": "morning_fail",
+      "scheduled_start": "2025-11-14T08:00:38.841621",
+      "scheduled_end": "2025-11-14T09:00:38.841621",
+      "actual_start": "2025-11-14T08:00:38.841621",
+      "actual_end": null,
+      "completed": false,
+      "energy_level": 2,
+      "difficulty": 4,
+      "satisfaction": 2,
+      "notes": "Missed due to tiredness"
+    }
+  }
+}

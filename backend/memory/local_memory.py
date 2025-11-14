@@ -6,6 +6,14 @@ from typing import List, Any, Dict, Optional
 from feedback import TaskFeedback, FeedbackStore
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    """Custom JSON encoder for datetime objects."""
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        return super().default(o)
+
+
 class LocalMemory:
     """JSON-backed memory store with feedback tracking and relevance retrieval.
 
@@ -54,32 +62,49 @@ class LocalMemory:
         entry = {"user_id": user_id, "item": item}
         if tags:
             entry["tags"] = tags
-        self.store.setdefault("memories", []).append(entry)
+            
+        # Check if there's already an entry with the same tags
+        memories = self.store.setdefault("memories", [])
+        updated = False
+        
+        # If tags are provided, try to find and update existing entry
+        if tags:
+            for i, existing_entry in enumerate(memories):
+                if (existing_entry.get("user_id") == user_id and 
+                    set(tags).issubset(set(existing_entry.get("tags", [])))):
+                    # Update existing entry
+                    memories[i] = entry
+                    updated = True
+                    break
+                    
+        # If no existing entry was found or updated, append new entry
+        if not updated:
+            memories.append(entry)
+            
         self._save_store()
 
     def retrieve(self, user_id: str, query: str = "", limit: int = 5) -> List[Any]:
         """Retrieve relevant items from memory."""
         # Get base candidates
         candidates = [m for m in self.store.get("memories", []) if m.get("user_id") == user_id]
-        if not query:
-            return [c["item"] for c in candidates][-limit:]
-
-        # Score by query relevance
-        qtokens = set(query.lower().split())
-        scored = []
-        for c in candidates:
-            text = str(c.get("item", "")).lower()
-            score = sum(1 for t in qtokens if t in text)
-            scored.append((score, c))
-
-        scored.sort(key=lambda x: x[0], reverse=True)
-        results = [c[1]["item"] for c in scored if c[0] > 0]
         
-        # Fallback to recent items
-        if not results:
-            results = [c["item"] for c in candidates][-limit:]
+        # If we have a query, filter by tags
+        if query:
+            # Split query into tags
+            query_tags = query.split()
+            filtered_candidates = []
+            for candidate in candidates:
+                candidate_tags = candidate.get("tags", [])
+                # Check if all query tags are in candidate tags
+                if all(any(q_tag in tag for tag in candidate_tags) for q_tag in query_tags):
+                    filtered_candidates.append(candidate)
+            candidates = filtered_candidates
+        
+        if not candidates:
+            return []
 
-        return results[:limit]
+        # Return items
+        return [c["item"] for c in candidates][-limit:]
 
     def add_feedback(self, user_id: str, feedback: TaskFeedback) -> None:
         """Add task completion feedback for a user."""
@@ -99,7 +124,7 @@ class LocalMemory:
         return {
             "recommendations": store.generate_scheduling_recommendations(),
             "time_slots": {
-                k: v.dict() for k, v in store.time_slots.items()
+                k: v.model_dump() for k, v in store.time_slots.items()
             }
         }
 
@@ -113,7 +138,7 @@ class LocalMemory:
     def _save_store(self) -> None:
         """Save the main memory store."""
         with open(self.path, "w", encoding="utf-8") as f:
-            json.dump(self.store, f, indent=2)
+            json.dump(self.store, f, indent=2, cls=DateTimeEncoder)
 
     def _save_feedback(self) -> None:
         """Save feedback data for all users."""
@@ -121,7 +146,7 @@ class LocalMemory:
         for user_id, store in self.feedback_stores.items():
             feedback_data[user_id] = {
                 task_id: {
-                    **feedback.dict(),
+                    **feedback.model_dump(),
                     "scheduled_start": feedback.scheduled_start.isoformat(),
                     "scheduled_end": feedback.scheduled_end.isoformat(),
                     "actual_start": feedback.actual_start.isoformat() if feedback.actual_start else None,
@@ -131,4 +156,4 @@ class LocalMemory:
             }
             
         with open(self.feedback_path, "w", encoding="utf-8") as f:
-            json.dump(feedback_data, f, indent=2)
+            json.dump(feedback_data, f, indent=2, cls=DateTimeEncoder)

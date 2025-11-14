@@ -34,21 +34,20 @@ def get_schedule(user_id: str, query: str, memory: Optional[LocalMemory] = None)
     all_user_data = memory.retrieve(user_id=user_id, query="")
     
     # Filter the data into tasks, fixed events, and preferences
-    tasks = [item['item'] for item in all_user_data if isinstance(item, dict) and item.get('item', {}).get('type') == 'task']
+    tasks = [item for item in all_user_data if isinstance(item, dict) and item.get('type') == 'task']
     # Assuming preferences are stored in a specific format; for now, we'll look for a 'preferences' key
-    preferences = [item['item'] for item in all_user_data if isinstance(item, dict) and 'break_ratio' in item.get('item', {})]
+    preferences_data = [item for item in all_user_data if isinstance(item, dict) and 'break_ratio' in item]
+    preferences = preferences_data[0] if preferences_data else {}
     
     # For fixedEvents, you might have another type or a different way to identify them.
-    # We will assume for now they might not be in memory and could be passed in the query.
-    fixed_events = [item['item'] for item in all_user_data if isinstance(item, dict) and item.get('item', {}).get('type') == 'fixedEvent']
-
+    fixed_events = [item for item in all_user_data if isinstance(item, dict) and item.get('type') == 'fixedEvent']
 
     initial_state = {
         "user_id": user_id,
         "query": query,
         "tasks": tasks,
         "fixedEvents": fixed_events,
-        "preferences": preferences[0] if preferences else {}
+        "preferences": preferences
     }
 
     result_state = run_agent_chain(initial_state, agents, memory)
